@@ -1,11 +1,181 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AyreliaSoftware Mini App</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+        }
+
+        #welcome-text {
+            color: rgb(235, 5, 90);
+            font-size: 2em;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .language-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .language-buttons button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .language-buttons img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .main-app {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            max-width: 768px; /* For tablet/mobile centering */
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgb(235, 5, 90);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .settings-button {
+            margin-left: 10px;
+            background: none;
+            border: none;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .coins {
+            display: flex;
+            align-items: center;
+            background-color: #eee;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        #coin-count {
+            margin-right: 5px;
+        }
+
+        .coins img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-button img {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 5px;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <div id="welcome-screen" class="welcome-screen">
@@ -29,6 +199,7 @@
         </header>
 
         <div id="content" class="content">
+            <!-- Pages will be shown here -->
         </div>
 
         <nav class="bottom-nav">
@@ -55,7 +226,98 @@
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script type="module" src="translations.js"></script>
-    <script type="module" src="script.js"></script>
+    <script>
+        const translations = {
+            en: {
+                home: "Home",
+                games: "Games",
+                trade: "Trade",
+                comingSoon: "Coming soon..",
+                settings: "Settings Soon...",
+                close: "Close"
+            },
+            ru: {
+                home: "Домой",
+                games: "Игры",
+                trade: "Торговля",
+                comingSoon: "Скоро..",
+                settings: "Настройки Скоро...",
+                close: "Закрыть"
+            }
+        };
+
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+
+        let lang = 'en'; // Default
+        const user = tg.initDataUnsafe.user || { username: 'AyrSof' };
+
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const welcomeText = document.getElementById('welcome-text');
+        const languageButtons = document.getElementById('language-buttons');
+        const mainApp = document.getElementById('main-app');
+        const avatar = document.getElementById('avatar');
+        const settingsButton = document.getElementById('settings-button');
+        const content = document.getElementById('content');
+        const settingsModal = document.getElementById('settings-modal');
+        const closeSettings = document.getElementById('close-settings');
+
+        function initAvatar() {
+            if (user.photo_url) {
+                const img = document.createElement('img');
+                img.src = user.photo_url;
+                avatar.appendChild(img);
+            } else {
+                avatar.textContent = 'AS';
+            }
+        }
+
+        function setLanguage(selectedLang) {
+            lang = selectedLang;
+            updateTexts();
+            welcomeScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            showPage('home');
+        }
+
+        function updateTexts() {
+            const t = translations[lang];
+            document.querySelector('#home-btn span').textContent = t.home;
+            document.querySelector('#games-btn span').textContent = t.games;
+            document.querySelector('#trade-btn span').textContent = t.trade;
+            settingsButton.textContent = user.username || 'AyrSof';
+            closeSettings.textContent = t.close;
+        }
+
+        function showPage(page) {
+            const t = translations[lang];
+            content.innerHTML = `<h2>${t[page]} | ${t.comingSoon}</h2>`;
+        }
+
+        document.getElementById('ru-button').addEventListener('click', () => setLanguage('ru'));
+        document.getElementById('en-button').addEventListener('click', () => setLanguage('en'));
+
+        document.getElementById('home-btn').addEventListener('click', () => showPage('home'));
+        document.getElementById('games-btn').addEventListener('click', () => showPage('games'));
+        document.getElementById('trade-btn').addEventListener('click', () => showPage('trade'));
+
+        settingsButton.addEventListener('click', () => {
+            settingsModal.querySelector('h2').textContent = translations[lang].settings;
+            settingsModal.classList.remove('hidden');
+        });
+
+        closeSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+        // Animation sequence
+        welcomeText.addEventListener('animationend', () => {
+            setTimeout(() => {
+                welcomeText.style.transform = 'translateY(-50px)';
+                languageButtons.classList.remove('hidden');
+                languageButtons.style.opacity = 1;
+            }, 1000);
+        });
+
+        initAvatar();
+    </script>
 </body>
 </html>

@@ -1,17 +1,61 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AyreliaSoftware</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyreliaSoftware Mini App</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Привет, <span id="username"></span>!</h1>
-  <p>Игры сыграно: <span id="games"></span></p>
-  <p>Победы: <span id="wins"></span></p>
-  <button id="play">Сыграть</button>
+    <div id="welcome-screen" class="welcome-screen">
+        <h1 id="welcome-text">AyreliaSoftware</h1>
+        <div id="language-buttons" class="language-buttons hidden">
+            <button id="ru-button"><img src="https://cdn-icons-png.flaticon.com/512/317/317289.png" alt="Russian"></button>
+            <button id="en-button"><img src="https://cdn-icons-png.flaticon.com/512/6595/6595909.png" alt="English"></button>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
+    <div id="main-app" class="main-app hidden">
+        <header class="header">
+            <div class="user-info">
+                <div id="avatar" class="avatar"></div>
+                <button id="settings-button" class="settings-button"></button>
+            </div>
+            <div class="coins">
+                <span id="coin-count">1337</span>
+                <img src="https://cdn-icons-png.flaticon.com/512/18339/18339105.png" alt="Coin">
+            </div>
+        </header>
+
+        <div id="content" class="content">
+        </div>
+
+        <nav class="bottom-nav">
+            <button id="home-btn" class="nav-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/17821/17821825.png" alt="Home">
+                <span>Home</span>
+            </button>
+            <button id="games-btn" class="nav-button">
+                <img src="https://cdn-icons-png.flaticon.com/svg/6627/6627666.svg" alt="Games">
+                <span>Games</span>
+            </button>
+            <button id="trade-btn" class="nav-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/2420/2420245.png" alt="Trade">
+                <span>Trade</span>
+            </button>
+        </nav>
+
+        <div id="settings-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Settings Soon...</h2>
+                <button id="close-settings">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script type="module" src="translations.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

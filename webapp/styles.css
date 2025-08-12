@@ -1,0 +1,171 @@
+/* style.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+.welcome-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+#welcome-text {
+    color: rgb(235, 5, 90);
+    font-size: 2em;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.language-buttons {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.language-buttons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.language-buttons img {
+    width: 60px;
+    height: 60px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.main-app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    max-width: 768px; /* For tablet/mobile centering */
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgb(235, 5, 90);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.settings-button {
+    margin-left: 10px;
+    background: none;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.coins {
+    display: flex;
+    align-items: center;
+    background-color: #eee;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+#coin-count {
+    margin-right: 5px;
+}
+
+.coins img {
+    width: 20px;
+    height: 20px;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+}
+
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.nav-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.nav-button img {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 5px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}

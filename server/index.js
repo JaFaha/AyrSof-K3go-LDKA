@@ -8,8 +8,9 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const webappPath = path.resolve(__dirname, "../webapp");
 
-app.use(express.static(path.join(__dirname, "../webapp")));
+app.use(express.static(webappPath));
 
 dotenv.config();
 const { Pool } = pkg;
@@ -76,7 +77,7 @@ app.post("/update", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../webapp/index.html"));
+  res.sendFile(path.join(webappPath, "index.html"));
 });
 
 

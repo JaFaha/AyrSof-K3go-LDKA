@@ -3,6 +3,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import crypto from "crypto";
 import pkg from "pg";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "../webapp")));
 
 dotenv.config();
 const { Pool } = pkg;
@@ -67,4 +74,10 @@ app.post("/update", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../webapp/index.html"));
+});
+
+
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));

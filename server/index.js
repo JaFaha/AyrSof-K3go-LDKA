@@ -6,25 +6,29 @@ import pkg from "pg";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const webappPath = path.resolve(__dirname, "../webapp");
-
-app.use(express.static(webappPath));
-
 dotenv.config();
 const { Pool } = pkg;
 
+// Инициализация Express
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Подключение к базе
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // для Render PostgreSQL
+  ssl: { rejectUnauthorized: false }
 });
 
-// Функция валидации Telegram WebApp initData
+// Пути для фронтенда
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const webappPath = path.resolve(__dirname, "../webapp");
+
+// Раздача статики (HTML, CSS, JS)
+app.use(express.static(webappPath));
+
+// Валидация Telegram данных
 function validateTelegramData(initData) {
   const secret = crypto.createHash("sha256").update(process.env.BOT_TOKEN).digest();
   const checkString = Object.keys(initData)
@@ -37,7 +41,7 @@ function validateTelegramData(initData) {
   return hmac === initData.hash;
 }
 
-// Авторизация
+// Роуты API
 app.post("/auth", async (req, res) => {
   const { initDataUnsafe } = req.body;
   if (!initDataUnsafe || !validateTelegramData(initDataUnsafe)) {
@@ -57,14 +61,12 @@ app.post("/auth", async (req, res) => {
   res.json({ ok: true });
 });
 
-// Получение статистики
 app.get("/stats/:id", async (req, res) => {
   const { id } = req.params;
   const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
   res.json(result.rows[0] || {});
 });
 
-// Обновление статистики
 app.post("/update", async (req, res) => {
   const { id, games_played, wins } = req.body;
   await pool.query(
@@ -74,11 +76,11 @@ app.post("/update", async (req, res) => {
   res.json({ ok: true });
 });
 
-const PORT = process.env.PORT || 3000;
-
+// Главная страница — index.html
 app.get("/", (req, res) => {
   res.sendFile(path.join(webappPath, "index.html"));
 });
 
-
+// Запуск сервера
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));

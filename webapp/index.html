@@ -105,10 +105,12 @@
 
         .settings-button {
             margin-left: 10px;
-            background: none;
+            background-color: #eee;
             border: none;
             font-size: 1em;
             cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
         }
 
         .coins {
@@ -117,6 +119,7 @@
             background-color: #eee;
             padding: 5px 10px;
             border-radius: 20px;
+            cursor: pointer;
         }
 
         #coin-count {
@@ -132,6 +135,7 @@
             flex: 1;
             padding: 20px;
             text-align: center;
+            overflow-y: auto;
         }
 
         .bottom-nav {
@@ -149,6 +153,12 @@
             background: none;
             border: none;
             cursor: pointer;
+            transition: transform 0.3s, color 0.3s;
+        }
+
+        .nav-button.active {
+            color: red;
+            transform: translateY(-5px);
         }
 
         .nav-button img {
@@ -174,6 +184,74 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
+            max-width: 80%;
+        }
+
+        .tile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tile-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .tile {
+            width: 90%;
+            height: 100px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .tile.small {
+            width: 45%;
+            height: 80px;
+        }
+
+        .tile img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 5px;
+        }
+
+        .tile.disabled {
+            background-color: #ccc;
+            cursor: default;
+        }
+
+        .tile-description {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .converter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .converter input {
+            width: 80%;
+            margin: 5px 0;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .converter label {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -181,8 +259,8 @@
     <div id="welcome-screen" class="welcome-screen">
         <h1 id="welcome-text">AyreliaSoftware</h1>
         <div id="language-buttons" class="language-buttons hidden">
-            <button id="ru-button"><img src="https://cdn-icons-png.flaticon.com/512/317/317289.png" alt="Russian"></button>
-            <button id="en-button"><img src="https://cdn-icons-png.flaticon.com/512/6595/6595909.png" alt="English"></button>
+            <button id="ru-button"><img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v1/icon_ru-lang_v1.png"></button>
+            <button id="en-button"><img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v1/icon_us-lang_v1.png"></button>
         </div>
     </div>
 
@@ -192,9 +270,9 @@
                 <div id="avatar" class="avatar"></div>
                 <button id="settings-button" class="settings-button"></button>
             </div>
-            <div class="coins">
+            <div id="coins-button" class="coins">
                 <span id="coin-count">1337</span>
-                <img src="https://cdn-icons-png.flaticon.com/512/18339/18339105.png" alt="Coin">
+                <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v1/icon_coin_v1.png">
             </div>
         </header>
 
@@ -203,16 +281,16 @@
         </div>
 
         <nav class="bottom-nav">
-            <button id="home-btn" class="nav-button">
-                <img src="https://cdn-icons-png.flaticon.com/512/17821/17821825.png" alt="Home">
-                <span>Home</span>
-            </button>
             <button id="games-btn" class="nav-button">
-                <img src="https://cdn-icons-png.flaticon.com/svg/6627/6627666.svg" alt="Games">
+                <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_games_v2.png">
                 <span>Games</span>
             </button>
+            <button id="home-btn" class="nav-button">
+                <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_home_v2.png">
+                <span>Home</span>
+            </button>
             <button id="trade-btn" class="nav-button">
-                <img src="https://cdn-icons-png.flaticon.com/512/2420/2420245.png" alt="Trade">
+                <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_trade_v2.png">
                 <span>Trade</span>
             </button>
         </nav>
@@ -221,6 +299,18 @@
             <div class="modal-content">
                 <h2>Settings Soon...</h2>
                 <button id="close-settings">Close</button>
+            </div>
+        </div>
+
+        <div id="converter-modal" class="modal hidden">
+            <div class="modal-content converter">
+                <h2>Converter</h2>
+                <label>Coins</label>
+                <input type="number" id="coins-input" value="1337">
+                <label>TON</label>
+                <input type="number" id="ton-input" value="13.37">
+                <p>100 Coins - 1 TON</p>
+                <button id="close-converter">Close</button>
             </div>
         </div>
     </div>
@@ -232,17 +322,33 @@
                 home: "Home",
                 games: "Games",
                 trade: "Trade",
-                comingSoon: "Coming soon..",
                 settings: "Settings Soon...",
-                close: "Close"
+                close: "Close",
+                comingSoon: "Coming soon...",
+                converter: "Converter",
+                bloggerCases: "Blogger Cases",
+                bloggerCasesDesc: "Open cases and win prizes",
+                plinko: "Plinko",
+                plinkoDesc: "Drop balls and multiply your bets",
+                plinkoClassic: "Plinko Classic",
+                casesSub: "Cases",
+                plinkoSub: "Plinko"
             },
             ru: {
                 home: "Домой",
                 games: "Игры",
                 trade: "Торговля",
-                comingSoon: "Скоро..",
                 settings: "Настройки Скоро...",
-                close: "Закрыть"
+                close: "Закрыть",
+                comingSoon: "Скоро...",
+                converter: "Конвертер",
+                bloggerCases: "Кейсы Блогеров",
+                bloggerCasesDesc: "Открывайте кейсы и выигрывайте призы",
+                plinko: "Плинко",
+                plinkoDesc: "Бросайте шары и умножайте ставки",
+                plinkoClassic: "Классический Плинко",
+                casesSub: "Кейсы",
+                plinkoSub: "Плинко"
             }
         };
 
@@ -250,7 +356,9 @@
         tg.ready();
 
         let lang = 'en'; // Default
-        const user = tg.initDataUnsafe.user || { username: 'AyrSof' };
+        const user = tg.initDataUnsafe.user || { username: 'Ayrelia' };
+        let currentPage = 'home';
+        let coinCount = 1337;
 
         const welcomeScreen = document.getElementById('welcome-screen');
         const welcomeText = document.getElementById('welcome-text');
@@ -261,6 +369,11 @@
         const content = document.getElementById('content');
         const settingsModal = document.getElementById('settings-modal');
         const closeSettings = document.getElementById('close-settings');
+        const converterModal = document.getElementById('converter-modal');
+        const closeConverter = document.getElementById('close-converter');
+        const coinsButton = document.getElementById('coins-button');
+        const coinsInput = document.getElementById('coins-input');
+        const tonInput = document.getElementById('ton-input');
 
         function initAvatar() {
             if (user.photo_url) {
@@ -268,7 +381,7 @@
                 img.src = user.photo_url;
                 avatar.appendChild(img);
             } else {
-                avatar.textContent = 'AS';
+                avatar.textContent = 'A';
             }
         }
 
@@ -285,13 +398,86 @@
             document.querySelector('#home-btn span').textContent = t.home;
             document.querySelector('#games-btn span').textContent = t.games;
             document.querySelector('#trade-btn span').textContent = t.trade;
-            settingsButton.textContent = user.username || 'AyrSof';
+            settingsButton.textContent = user.username || 'Ayrelia';
             closeSettings.textContent = t.close;
+            closeConverter.textContent = t.close;
+            converterModal.querySelector('h2').textContent = t.converter;
+        }
+
+        function updateActiveButton() {
+            document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+            if (currentPage === 'home') document.getElementById('home-btn').classList.add('active');
+            else if (currentPage === 'games') document.getElementById('games-btn').classList.add('active');
+            else if (currentPage === 'trade') document.getElementById('trade-btn').classList.add('active');
         }
 
         function showPage(page) {
+            currentPage = page;
+            updateActiveButton();
             const t = translations[lang];
-            content.innerHTML = `<h2>${t[page]} | ${t.comingSoon}</h2>`;
+            if (page === 'home' || page === 'trade') {
+                content.innerHTML = `<h2>${t[page]}</h2>`;
+            } else if (page === 'games') {
+                content.innerHTML = `
+                    <div class="tile-container">
+                        <div class="tile" id="blogger-cases-tile">
+                            <img src="https://raw.githubusercontent.com/JaFaha/Ayrelia-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_in-games_cases_main_v2.png">
+                            <span>${t.bloggerCases}</span>
+                        </div>
+                        <p class="tile-description">${t.bloggerCasesDesc}</p>
+                        <div class="tile" id="plinko-tile">
+                            <img src="https://raw.githubusercontent.com/JaFaha/Ayrelia-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_in-games_plinko_main_v2.png">
+                            <span>${t.plinko}</span>
+                        </div>
+                        <p class="tile-description">${t.plinkoDesc}</p>
+                        <div class="tile disabled">
+                            <span>${t.comingSoon}</span>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('blogger-cases-tile').addEventListener('click', showCasesSub);
+                document.getElementById('plinko-tile').addEventListener('click', showPlinkoSub);
+            }
+        }
+
+        function showCasesSub() {
+            const t = translations[lang];
+            content.innerHTML = `
+                <div class="tile-container">
+                    <h3>${t.casesSub}</h3>
+                    <div class="tile-row">
+                        <div class="tile small">
+                            <span>Case 1</span>
+                        </div>
+                        <div class="tile small">
+                            <span>Case 2</span>
+                        </div>
+                    </div>
+                    <div class="tile-row">
+                        <div class="tile small disabled">
+                            <span>${t.comingSoon}</span>
+                        </div>
+                        <div class="tile small disabled">
+                            <span>${t.comingSoon}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showPlinkoSub() {
+            const t = translations[lang];
+            content.innerHTML = `
+                <div class="tile-container">
+                    <h3>${t.plinkoSub}</h3>
+                    <div class="tile">
+                        <span>${t.plinkoClassic}</span>
+                    </div>
+                    <div class="tile disabled">
+                        <span>${t.comingSoon}</span>
+                    </div>
+                </div>
+            `;
         }
 
         document.getElementById('ru-button').addEventListener('click', () => setLanguage('ru'));
@@ -307,6 +493,24 @@
         });
 
         closeSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+        coinsButton.addEventListener('click', () => {
+            coinsInput.value = coinCount;
+            tonInput.value = (coinCount / 100).toFixed(2);
+            converterModal.classList.remove('hidden');
+        });
+
+        closeConverter.addEventListener('click', () => converterModal.classList.add('hidden'));
+
+        coinsInput.addEventListener('input', () => {
+            const coins = parseFloat(coinsInput.value) || 0;
+            tonInput.value = (coins / 100).toFixed(2);
+        });
+
+        tonInput.addEventListener('input', () => {
+            const ton = parseFloat(tonInput.value) || 0;
+            coinsInput.value = (ton * 100).toFixed(0);
+        });
 
         // Animation sequence
         welcomeText.addEventListener('animationend', () => {

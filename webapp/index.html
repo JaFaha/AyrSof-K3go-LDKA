@@ -81,13 +81,21 @@
 
     /* App frame */
     .main-app {
-      display: flex; flex-direction: column;
-      height: 100%; width: 100%; max-width: 768px; margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      max-width: 768px;
+      margin: 0 auto;
       background: transparent;
     }
     .header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 14px; background: var(--paper); border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
     }
     .user-info { display: flex; align-items: center; gap: 10px; }
     .avatar {
@@ -117,10 +125,15 @@
     .content { flex: 1; padding: 16px; text-align: center; overflow-y: auto; }
 
     .bottom-nav {
-      display: flex; justify-content: space-around; background: var(--paper);
-      border-top: 1px solid var(--line); padding: 8px 0;
-      position: sticky; bottom: 0;
+      display: flex;
+      justify-content: space-around;
+      background: var(--paper);
+      border-top: 1px solid var(--line);
+      padding: 8px 0;
+      position: sticky;
+      bottom: 0;
     }
+
     .nav-button {
       display: flex; flex-direction: column; align-items: center; gap: 2px;
       background: none; border: none; cursor: pointer; padding: 6px 10px;
@@ -205,7 +218,6 @@
   </style>
 </head>
 <body>
-  <!-- Welcome -->
   <div id="welcome-screen" class="welcome-screen">
     <h1 id="welcome-text">AyreliaSoftware</h1>
     <div id="language-buttons" class="language-buttons hidden">
@@ -218,7 +230,6 @@
     </div>
   </div>
 
-  <!-- App -->
   <div id="main-app" class="main-app hidden">
     <header class="header">
       <div class="user-info">
@@ -231,24 +242,23 @@
       </div>
     </header>
 
-    <div id="content" class="content"><!-- dynamic --></div>
+    <div id="content" class="content"></div>
 
     <nav class="bottom-nav">
       <button id="games-btn" class="nav-button">
         <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_games_v2.png" alt="">
         <span>Games</span>
       </button>
-      <button id="home-btn" class="nav-button">
+      <button id="pvp-btn" class="nav-button">
         <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_home_v2.png" alt="">
-        <span>Home</span>
+        <span>PvP</span>
       </button>
-      <button id="trade-btn" class="nav-button">
+      <button id="money-btn" class="nav-button">
         <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_trade_v2.png" alt="">
-        <span>Trade</span>
+        <span>Money</span>
       </button>
     </nav>
 
-    <!-- Settings Modal -->
     <div id="settings-modal" class="modal hidden" data-modal>
       <div class="modal-content">
         <button class="modal-close" data-close>&times;</button>
@@ -272,7 +282,6 @@
       </div>
     </div>
 
-    <!-- Converter Modal -->
     <div id="converter-modal" class="modal hidden" data-modal>
       <div class="modal-content">
         <button class="modal-close" data-close>&times;</button>
@@ -282,7 +291,6 @@
         <div class="converter-grid">
           <div class="conv-field">
             <label class="conv-label" id="coins-label">Coins</label>
-            <!-- обычные аккуратные поля, только цифры и . , -->
             <input id="coins-input" class="conv-input" inputmode="decimal" autocomplete="off" spellcheck="false" />
           </div>
 
@@ -302,9 +310,9 @@
     /* i18n */
     const translations = {
       en: {
-        home: "Home",
+        pvp: "PvP",
         games: "Games",
-        trade: "Trade",
+        money: "Money",
         settings: "Settings",
         preferences: "Preferences",
         converter: "Converter",
@@ -319,17 +327,22 @@
         casesSub: "Cases",
         cases_people_enot: "Case eNOT",
         cases_people_ezbro: "Case Ez Bro",
+        cases_people_ellephant: "Case Ellephant",
         plinko: "Plinko",
         plinkoDesc: "Drop balls and multiply your bets",
         plinkoSub: "Plinko",
         plinkoClassic: "Plinko Classic",
         language: "Language",
-        theme: "Theme"
+        theme: "Theme",
+        cashOut: "Cash out",
+        inventory: "Inventory",
+        promoCodes: "Promo codes",
+        giftUpgrades: "Gift upgrades"
       },
       ru: {
-        home: "Лобби",
+        pvp: "ПвП",
         games: "Игры",
-        trade: "Торговля",
+        money: "Деньги",
         settings: "Настройки",
         preferences: "Параметры",
         converter: "Конвертер",
@@ -344,12 +357,17 @@
         casesSub: "Кейсы",
         cases_people_enot: "Кейс eNOT",
         cases_people_ezbro: "Кейс Ez Bro",
+        cases_people_ellephant: "Кейс Ellephant",
         plinko: "Плинко",
         plinkoDesc: "Бросай шар и умножай ставку",
         plinkoSub: "Плинко",
         plinkoClassic: "Классический Плинко",
         language: "Язык",
-        theme: "Тема"
+        theme: "Тема",
+        cashOut: "Вывести деньги",
+        inventory: "Инвентарь",
+        promoCodes: "Промокоды",
+        giftUpgrades: "Улучшение подарков"
       }
     };
 
@@ -360,7 +378,7 @@
     /* State */
     let lang = 'en';
     const user = tg.initDataUnsafe.user || { username: 'Ayrelia' };
-    let currentPage = 'home';
+    let currentPage = 'pvp';
     let coinCount = 1337;
 
     /* Elements */
@@ -411,14 +429,14 @@
       updateTexts();
       welcomeScreen.classList.add('hidden');
       mainApp.classList.remove('hidden');
-      showPage('home');
+      showPage('pvp');
     }
 
     function updateTexts() {
       const t = translations[lang];
-      document.querySelector('#home-btn span').textContent = t.home;
+      document.querySelector('#pvp-btn span').textContent = t.pvp;
       document.querySelector('#games-btn span').textContent = t.games;
-      document.querySelector('#trade-btn span').textContent = t.trade;
+      document.querySelector('#money-btn span').textContent = t.money;
 
       settingsButton.textContent = user.username || 'Ayrelia';
 
@@ -436,9 +454,9 @@
 
     function updateActiveButton() {
       document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
-      if (currentPage === 'home') document.getElementById('home-btn').classList.add('active');
+      if (currentPage === 'pvp') document.getElementById('pvp-btn').classList.add('active');
       else if (currentPage === 'games') document.getElementById('games-btn').classList.add('active');
-      else if (currentPage === 'trade') document.getElementById('trade-btn').classList.add('active');
+      else if (currentPage === 'money') document.getElementById('money-btn').classList.add('active');
     }
 
     /* Pages */
@@ -446,20 +464,27 @@
       currentPage = page;
       updateActiveButton();
       const t = translations[lang];
-      if (page === 'home' || page === 'trade') {
+      if (page === 'pvp') {
         content.innerHTML = `<h2 class="modal-title" style="margin-top:4px">${t[page]}</h2>`;
+      } else if (page === 'money') {
+        content.innerHTML = `
+          <div class="tile-container">
+            <div class="tile"><span>${t.cashOut}</span></div>
+            <div class="tile"><span>${t.inventory}</span></div>
+            <div class="tile"><span>${t.promoCodes}</span></div>
+            <div class="tile"><span>${t.giftUpgrades}</span></div>
+          </div>
+        `;
       } else if (page === 'games') {
         content.innerHTML = `
           <div class="tile-container">
             <div class="tile" id="blogger-cases-tile">
               <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_in-games_cases_main_v2.png" alt="">
             </div>
-            <p class="tile-description">${t.casesDesc}</p>
 
             <div class="tile" id="plinko-tile">
               <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_in-games_plinko_main_v2.png" alt="">
             </div>
-            <p class="tile-description">${t.plinkoDesc}</p>
 
             <div class="tile disabled"><span>${t.comingSoon}</span></div>
           </div>
@@ -497,7 +522,7 @@
             <div class="tile small"><span>${t.cases_people_ezbro}</span></div>
           </div>
           <div class="tile-row">
-            <div class="tile small disabled"><span>${t.comingSoon}</span></div>
+            <div class="tile small"><span>${t.cases_people_ellephant}</span></div>
             <div class="tile small disabled"><span>${t.comingSoon}</span></div>
           </div>
         </div>
@@ -545,9 +570,9 @@
     document.getElementById('ru-button').addEventListener('click', () => setLanguage('ru'));
     document.getElementById('en-button').addEventListener('click', () => setLanguage('en'));
 
-    document.getElementById('home-btn').addEventListener('click', () => showPage('home'));
+    document.getElementById('pvp-btn').addEventListener('click', () => showPage('pvp'));
     document.getElementById('games-btn').addEventListener('click', () => showPage('games'));
-    document.getElementById('trade-btn').addEventListener('click', () => showPage('trade'));
+    document.getElementById('money-btn').addEventListener('click', () => showPage('money'));
 
     /* Settings open */
     settingsButton.addEventListener('click', () => {

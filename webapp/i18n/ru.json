@@ -1,0 +1,21 @@
+{
+  "connect_wallet": "Connect wallet",
+  "balance": "Баланс",
+  "withdrawal": "Вывод",
+  "promo_title": "Промо",
+  "promo_code": "Промокод",
+  "upgrade": "Апгрейд",
+  "deposit": "Депозит",
+  "referral_program": "Реферальная программа",
+  "settings": "Настройки",
+  "support": "Поддержка",
+  "my_inventory": "Мой инвентарь",
+  "all": "Все",
+  "available": "Доступно",
+  "inventory_empty": "В инвентаре пусто",
+  "open_case": "Открыть кейс",
+  "tab_game": "Игра",
+  "tab_home": "Домой",
+  "tab_swap": "Swap",
+  "tab_profile": "Профиль"
+}

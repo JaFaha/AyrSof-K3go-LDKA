@@ -1,0 +1,21 @@
+{
+  "connect_wallet": "Connect wallet",
+  "balance": "Balance",
+  "withdrawal": "Withdrawal",
+  "promo_title": "Promo",
+  "promo_code": "Promo code",
+  "upgrade": "Upgrade",
+  "deposit": "Deposit",
+  "referral_program": "Referral program",
+  "settings": "Settings",
+  "support": "Support",
+  "my_inventory": "My inventory",
+  "all": "All",
+  "available": "Available",
+  "inventory_empty": "There is nothing in your inventory",
+  "open_case": "Open case",
+  "tab_game": "Game",
+  "tab_home": "Home",
+  "tab_swap": "Swap",
+  "tab_profile": "Profile"
+}

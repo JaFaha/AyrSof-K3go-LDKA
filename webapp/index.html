@@ -1,661 +1,189 @@
 <!DOCTYPE html>
-<html lang="en" class="old-money">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>AyreliaSoftware Mini App</title>
-  <style>
-    :root {
-      /* Old Money палитра */
-      --bg: #f7f5f0;
-      --paper: #ffffff;
-      --ink: #2b2b2b;
-      --muted: #6b6b6b;
-      --line: #d9d4c7;
-      --accent: #9f3b3b; /* красный заглушенный */
-      --accent-weak: #c46767;
-      --pill: #efeae2;
-      --shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
-
-      /* Типографика */
-      --font: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-      --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-
-      /* Радиусы */
-      --r-sm: 10px;
-      --r-md: 14px;
-      --r-lg: 18px;
-
-      /* Переходы */
-      --t-fast: .15s ease;
-      --t-mid: .25s ease;
-    }
-
-    * {
-        box-sizing: border-box;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--font-ui);
-      overflow: hidden;
-    }
-
-    /* Welcome */
-    .welcome-screen {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 100%; width: 100%;
-    }
-    #welcome-text {
-      font-family: var(--font);
-      letter-spacing: .5px;
-      color: var(--ink);
-      font-size: 28px;
-      opacity: 0; animation: fadeIn 1.2s forwards;
-    }
-    @keyframes fadeIn { from {opacity:0; transform: translateY(6px) scale(.98);} to {opacity:1; transform: translateY(0) scale(1);} }
-
-    .language-buttons {
-      display: flex; gap: 14px; margin-top: 14px; opacity: 0; transition: opacity var(--t-mid);
-    }
-    .language-buttons button {
-      background: var(--paper); border: 1px solid var(--line); cursor: pointer;
-      padding: 8px; border-radius: var(--r-sm); box-shadow: var(--shadow);
-      transition: transform var(--t-fast), border-color var(--t-fast);
-    }
-    .language-buttons button:hover { transform: translateY(-1px); border-color: var(--accent); }
-    .language-buttons img { width: 38px; height: 38px; display: block; }
-
-    .hidden { display: none !important; }
-
-    /* App frame */
-    .main-app {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      width: 100%;
-      max-width: 768px;
-      margin: 0 auto;
-      background: transparent;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      background: var(--paper);
-      border-bottom: 1px solid var(--line);
-    }
-    .user-info { display: flex; align-items: center; gap: 10px; }
-    .avatar {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center;
-      font-weight: 700; overflow: hidden; box-shadow: var(--shadow);
-      font-family: var(--font-ui);
-    }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .settings-button {
-      margin-left: 2px; background: var(--pill); border: 1px solid var(--line);
-      font-size: 14px; cursor: pointer; padding: 6px 10px; border-radius: 999px;
-      transition: border-color var(--t-fast), transform var(--t-fast);
-    }
-    .settings-button:hover { border-color: var(--accent); transform: translateY(-1px); }
-
-    .coins {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--paper); padding: 6px 10px; border-radius: 999px; cursor: pointer;
-      border: 1px solid var(--line); box-shadow: var(--shadow);
-      transition: transform var(--t-fast), border-color var(--t-fast);
-    }
-    .coins:hover { transform: translateY(-1px); border-color: var(--accent); }
-    #coin-count { font-weight: 600; letter-spacing: .2px; }
-    .coins img { width: 20px; height: 20px; }
-
-    .content { flex: 1; padding: 16px; text-align: center; overflow-y: auto; }
-
-    .bottom-nav {
-      display: flex;
-      justify-content: space-around;
-      background: var(--paper);
-      border-top: 1px solid var(--line);
-      padding: 8px 0;
-      position: sticky;
-      bottom: 0;
-    }
-
-    .nav-button {
-      display: flex; flex-direction: column; align-items: center; gap: 2px;
-      background: none; border: none; cursor: pointer; padding: 6px 10px;
-      transition: color var(--t-fast), transform var(--t-fast);
-      color: var(--muted);
-    }
-    .nav-button.active { color: var(--accent); transform: translateY(-2px); }
-    .nav-button img { width: 26px; height: 26px; }
-
-    /* Cards / tiles */
-    .tile-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-    .tile {
-      width: 92%; height: 96px; background: var(--paper); border: 1px solid var(--line);
-      border-radius: var(--r-md); display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: transform var(--t-fast), border-color var(--t-fast), background var(--t-fast);
-      overflow: hidden; box-shadow: var(--shadow); padding: 12px;
-    }
-    .tile:hover { transform: translateY(-2px); border-color: var(--accent); }
-    .tile.small { width: 46%; min-height: 84px; }
-    .tile.disabled { background: #f1eee8; color: #9b9687; cursor: default; border-style: dashed; }
-    .tile img { width: 100%; height: 100%; object-fit: contain; border-radius: inherit; margin: 0; transition: filter 0.2s ease, transform 0.2s ease;}
-    .tile:hover img { filter: brightness(0.85); transform: scale(1.02); }
-    .tile-description { font-size: 12.5px; color: var(--muted); margin-top: -2px; width: 92%; }
-
-    .tile-row { display: flex; justify-content: space-between; width: 92%; gap: 8px; }
-
-    /* Modal base */
-    .modal {
-      position: fixed; inset: 0; background: rgba(0,0,0,.45);
-      display: flex; justify-content: center; align-items: center; padding: 16px;
-    }
-    .modal-content {
-      position: relative; background: var(--paper); border: 1px solid var(--line);
-      border-radius: var(--r-lg); box-shadow: var(--shadow); text-align: left;
-      padding: 16px 16px 18px; width: min(560px, calc(100vw - 28px));
-    }
-    .modal-title {
-      margin: 0 0 4px; font-family: var(--font); font-size: 18px; letter-spacing: .2px;
-    }
-    .modal-sub {
-      margin: 0 0 12px; font-size: 12.5px; color: var(--muted);
-    }
-    .modal-close {
-      position: absolute; top: 10px; right: 10px; border: 1px solid var(--line); background: var(--paper);
-      width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 16px; line-height: 28px;
-      text-align: center; transition: border-color var(--t-fast), transform var(--t-fast);
-    }
-    .modal-close:hover { border-color: var(--accent); transform: translateY(-1px); }
-
-    /* Converter layout */
-    .converter-grid {
-      display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center;
-      margin-top: 8px;
-    }
-    .conv-field {
-      display: flex; flex-direction: column; gap: 6px;
-    }
-    .conv-label {
-      font-size: 12px; color: var(--muted); letter-spacing: .2px;
-    }
-    .conv-input {
-      height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper);
-      padding: 0 12px; font-size: 16px; outline: none; transition: border-color var(--t-fast);
-      width: 100%;
-    }
-    .conv-input:focus { border-color: var(--accent); }
-    .conv-eq { font-family: var(--font); font-size: 18px; color: var(--muted); padding-top: 22px; }
-
-    .rate-line {
-      margin-top: 6px; font-size: 12.5px; color: var(--muted);
-    }
-
-    /* Settings */
-    .settings-list { display: grid; gap: 12px; margin-top: 8px; }
-    .settings-item { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
-    .settings-label { color: var(--muted); font-size: 13px; }
-    .select {
-      height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper);
-      padding: 0 10px; font-size: 14px; outline: none; transition: border-color var(--t-fast);
-    }
-    .select:focus { border-color: var(--accent); }
-  </style>
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+  />
+  <title>AyreliaSoftware | LDK</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <div id="welcome-screen" class="welcome-screen">
-    <h1 id="welcome-text">AyreliaSoftware</h1>
-    <div id="language-buttons" class="language-buttons hidden">
-      <button id="ru-button" title="Русский">
-        <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v1/icon_ru-lang_v1.png" alt="RU">
-      </button>
-      <button id="en-button" title="English">
-        <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v1/icon_us-lang_v1.png" alt="EN">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="logo-btn" id="btn-logo" aria-label="Open profile">
+        <img src="icons/v2/icon_home_v2.png" alt="App" class="app-logo" />
       </button>
     </div>
-  </div>
 
-  <div id="main-app" class="main-app hidden">
-    <header class="header">
-      <div class="user-info">
-        <div id="avatar" class="avatar"></div>
-        <button id="settings-button" class="settings-button"></button>
-      </div>
-      <div id="coins-button" class="coins" title="Open converter">
-        <span id="coin-count">1337</span>
-        <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v1/icon_coin_v1.png" alt="Coin">
-      </div>
-    </header>
+    <div class="header-center">
+    </div>
 
-    <div id="content" class="content"></div>
-
-    <nav class="bottom-nav">
-      <button id="games-btn" class="nav-button">
-        <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_games_v2.png" alt="">
-        <span>Games</span>
-      </button>
-      <button id="pvp-btn" class="nav-button">
-        <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_home_v2.png" alt="">
-        <span>PvP</span>
-      </button>
-      <button id="money-btn" class="nav-button">
-        <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_trade_v2.png" alt="">
-        <span>Money</span>
-      </button>
-    </nav>
-
-    <div id="settings-modal" class="modal hidden" data-modal>
-      <div class="modal-content">
-        <button class="modal-close" data-close>&times;</button>
-        <h2 class="modal-title" id="settings-title">Settings</h2>
-        <p class="modal-sub" id="settings-sub">Preferences</p>
-        <div class="settings-list">
-          <div class="settings-item">
-            <div class="settings-label" id="lang-label">Language</div>
-            <select id="lang-select" class="select">
-              <option value="en">English</option>
-              <option value="ru">Русский</option>
-            </select>
-          </div>
-          <div class="settings-item">
-            <div class="settings-label" id="theme-label">Theme</div>
-            <select id="theme-select" class="select">
-              <option value="old-money">Old Money</option>
-            </select>
-          </div>
+    <div class="header-right">
+      <button class="avatar-btn" id="btn-avatar" aria-label="Open profile">
+        <div class="avatar" id="avatar">
+          <span class="avatar-fallback">A</span>
         </div>
-      </div>
+      </button>
     </div>
+  </header>
 
-    <div id="converter-modal" class="modal hidden" data-modal>
-      <div class="modal-content">
-        <button class="modal-close" data-close>&times;</button>
-        <h2 class="modal-title" id="converter-title">Converter</h2>
-        <p class="rate-line" id="rate-line">100 Coins = 1 TON</p>
 
-        <div class="converter-grid">
-          <div class="conv-field">
-            <label class="conv-label" id="coins-label">Coins</label>
-            <input id="coins-input" class="conv-input" inputmode="decimal" autocomplete="off" spellcheck="false" />
-          </div>
+  <!-- Main -->
+  <main class="app-main">
+    <!-- PAGE: Game -->
+    <section class="page" id="page-game" data-page="game" hidden>
+    </section>
 
-          <div class="conv-eq">=</div>
+    <!-- PAGE: Home -->
+    <section class="page" id="page-home" data-page="home" hidden>
+    </section>
 
-          <div class="conv-field">
-            <label class="conv-label" id="ton-label">TON</label>
-            <input id="ton-input" class="conv-input" inputmode="decimal" autocomplete="off" spellcheck="false" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    /* i18n */
-    const translations = {
-      en: {
-        pvp: "PvP",
-        games: "Games",
-        money: "Money",
-        settings: "Settings",
-        preferences: "Preferences",
-        converter: "Converter",
-        rate: "100 Coins = 1 TON",
-        coins: "Coins",
-        ton: "TON",
-        comingSoon: "Coming soon...",
-        cases: "Cases",
-        casesDesc: "Open cases and win prizes",
-        casesColab: "Collaboration",
-        casesOur: "Our",
-        casesSub: "Cases",
-        cases_people_enot: "Case eNOT",
-        cases_people_ezbro: "Case Ez Bro",
-        cases_people_ellephant: "Case Ellephant",
-        plinko: "Plinko",
-        plinkoDesc: "Drop balls and multiply your bets",
-        plinkoSub: "Plinko",
-        plinkoClassic: "Plinko Classic",
-        language: "Language",
-        theme: "Theme",
-        cashOut: "Cash out",
-        inventory: "Inventory",
-        promoCodes: "Promo codes",
-        giftUpgrades: "Gift upgrades"
-      },
-      ru: {
-        pvp: "ПвП",
-        games: "Игры",
-        money: "Деньги",
-        settings: "Настройки",
-        preferences: "Параметры",
-        converter: "Конвертер",
-        rate: "100 Coins = 1 TON",
-        coins: "Монеты",
-        ton: "TON",
-        comingSoon: "Скоро...",
-        cases: "Кейсы",
-        casesDesc: "Открывайте кейсы и выигрывайте призы",
-        casesColab: "Коллаборации",
-        casesOur: "Наши",
-        casesSub: "Кейсы",
-        cases_people_enot: "Кейс eNOT",
-        cases_people_ezbro: "Кейс Ez Bro",
-        cases_people_ellephant: "Кейс Ellephant",
-        plinko: "Плинко",
-        plinkoDesc: "Бросай шар и умножай ставку",
-        plinkoSub: "Плинко",
-        plinkoClassic: "Классический Плинко",
-        language: "Язык",
-        theme: "Тема",
-        cashOut: "Вывести деньги",
-        inventory: "Инвентарь",
-        promoCodes: "Промокоды",
-        giftUpgrades: "Улучшение подарков"
-      }
-    };
-
-    /* Telegram init */
-    const tg = window.Telegram?.WebApp || { ready(){}, initDataUnsafe: { user: { username: "Ayrelia" } } };
-    tg.ready();
-
-    /* State */
-    let lang = 'en';
-    const user = tg.initDataUnsafe.user || { username: 'Ayrelia' };
-    let currentPage = 'pvp';
-    let coinCount = 1337;
-
-    /* Elements */
-    const welcomeScreen = document.getElementById('welcome-screen');
-    const welcomeText = document.getElementById('welcome-text');
-    const languageButtons = document.getElementById('language-buttons');
-    const mainApp = document.getElementById('main-app');
-    const avatar = document.getElementById('avatar');
-    const settingsButton = document.getElementById('settings-button');
-    const content = document.getElementById('content');
-
-    const settingsModal = document.getElementById('settings-modal');
-    const converterModal = document.getElementById('converter-modal');
-
-    const coinsButton = document.getElementById('coins-button');
-    const coinsInput = document.getElementById('coins-input');
-    const tonInput = document.getElementById('ton-input');
-
-    /* Settings modal elements */
-    const settingsTitle = document.getElementById('settings-title');
-    const settingsSub = document.getElementById('settings-sub');
-    const langLabel = document.getElementById('lang-label');
-    const themeLabel = document.getElementById('theme-label');
-    const langSelect = document.getElementById('lang-select');
-    const themeSelect = document.getElementById('theme-select');
-
-    /* Converter labels */
-    const converterTitle = document.getElementById('converter-title');
-    const rateLine = document.getElementById('rate-line');
-    const coinsLabel = document.getElementById('coins-label');
-    const tonLabel = document.getElementById('ton-label');
-
-    /* Helpers */
-    function initAvatar() {
-      if (user.photo_url) {
-        const img = document.createElement('img');
-        img.src = user.photo_url;
-        img.alt = 'Avatar';
-        avatar.appendChild(img);
-      } else {
-        const letter = (user.username || 'A').trim()[0] || 'A';
-        avatar.textContent = letter.toUpperCase();
-      }
-    }
-
-    function setLanguage(selectedLang) {
-      lang = selectedLang;
-      updateTexts();
-      welcomeScreen.classList.add('hidden');
-      mainApp.classList.remove('hidden');
-      showPage('pvp');
-    }
-
-    function updateTexts() {
-      const t = translations[lang];
-      document.querySelector('#pvp-btn span').textContent = t.pvp;
-      document.querySelector('#games-btn span').textContent = t.games;
-      document.querySelector('#money-btn span').textContent = t.money;
-
-      settingsButton.textContent = user.username || 'Ayrelia';
-
-      // Settings modal text
-      settingsTitle.textContent = t.settings;
-      settingsSub.textContent = t.preferences;
-      langLabel.textContent = t.language;
-      themeLabel.textContent = t.theme;
-      // Converter modal text
-      converterTitle.textContent = t.converter;
-      rateLine.textContent = t.rate;
-      coinsLabel.textContent = t.coins;
-      tonLabel.textContent = t.ton;
-    }
-
-    function updateActiveButton() {
-      document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
-      if (currentPage === 'pvp') document.getElementById('pvp-btn').classList.add('active');
-      else if (currentPage === 'games') document.getElementById('games-btn').classList.add('active');
-      else if (currentPage === 'money') document.getElementById('money-btn').classList.add('active');
-    }
-
-    /* Pages */
-    function showPage(page) {
-      currentPage = page;
-      updateActiveButton();
-      const t = translations[lang];
-      if (page === 'pvp') {
-        content.innerHTML = `<h2 class="modal-title" style="margin-top:4px">${t[page]}</h2>`;
-      } else if (page === 'money') {
-        content.innerHTML = `
-          <div class="tile-container">
-            <div class="tile"><span>${t.cashOut}</span></div>
-            <div class="tile"><span>${t.inventory}</span></div>
-            <div class="tile"><span>${t.promoCodes}</span></div>
-            <div class="tile"><span>${t.giftUpgrades}</span></div>
-          </div>
-        `;
-      } else if (page === 'games') {
-        content.innerHTML = `
-          <div class="tile-container">
-            <div class="tile" id="blogger-cases-tile">
-              <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_in-games_cases_main_v2.png" alt="">
+    <!-- PAGE: Swap -->
+    <section class="page" id="page-swap" data-page="swap" hidden>
+      <div class="container">
+        <!-- Balance card -->
+        <div class="card row between center-y gap-12">
+          <div class="row center-y gap-8">
+            <img src="icons/v2/icon_home_v2.png" alt="" class="icon-20" />
+            <div class="balance-texts">
+              <div class="label muted" data-i18n="balance">Balance</div>
+              <div class="amount" id="swap-balance">0</div>
             </div>
+          </div>
+          <button class="btn btn-accent btn-deposit" id="btn-withdrawal" data-i18n="withdrawal">Withdrawal</button>
+        </div>
 
-            <div class="tile" id="plinko-tile">
-              <img src="https://raw.githubusercontent.com/JaFaha/AyrSof-K3go-LDKA/refs/heads/main/webapp/icons/v2/icon_in-games_plinko_main_v2.png" alt="">
+        <!-- Promo code -->
+        <div class="card row between center-y gap-12">
+          <div class="row center-y gap-8">
+            <img src="icons/v2/icon_home_v2.png" alt="" class="icon-20" />
+            <div class="h6" data-i18n="promo_title">Promo code</div>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btn-promo" data-i18n="promo_code">Promo code</button>
+        </div>
+
+        <!-- Upgrade big button -->
+        <button class="btn btn-accent btn-lg fullwidth" id="btn-upgrade" data-i18n="upgrade">
+          Upgrade
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE: Profile -->
+    <section class="page" id="page-profile" data-page="profile">
+      <div class="container">
+
+        <!-- Center avatar + name -->
+        <div class="profile-top">
+          <div class="avatar avatar-lg" id="profile-avatar">
+            <span class="avatar-fallback">A</span>
+          </div>
+          <div class="username" id="profile-username">Ayrelia</div>
+        </div>
+
+        <!-- Action cards -->
+        <div class="stack gap-12">
+          <!-- Balance -->
+          <div class="card balance-card">
+            <div class="balance-left">
+              <img src="icons/v2/icon_home_v2.png" alt="" class="icon-24" />
+              <div class="balance-texts">
+                <div class="label muted" data-i18n="balance">Balance</div>
+                <div class="amount" id="profile-balance">0</div>
+              </div>
             </div>
-
-            <div class="tile disabled"><span>${t.comingSoon}</span></div>
+            <button class="btn btn-accent btn-deposit" id="btn-deposit" data-i18n="deposit">Deposit</button>
           </div>
-        `;
-        document.getElementById('blogger-cases-tile').addEventListener('click', showCasesSub);
-        document.getElementById('plinko-tile').addEventListener('click', showPlinkoSub);
-      }
-    }
 
-    /* Subpages */
-    function showCasesSub() {
-      const t = translations[lang];
-      content.innerHTML = `
-        <div class="tile-container">
-          <h3 class="modal-title" style="margin:2px 0 2px">${t.cases}</h3>
+          <!-- Connect wallet -->
+          <button class="card btn center btn-accent" id="card-connect-wallet">
+            <div class="row center-y gap-8">
+              <img src="icons/v2/icon_home_v2.png" alt="" class="icon-20" />
+              <div class="h6" data-i18n="connect_wallet">Connect wallet</div>
+            </div>
+            <img src="icons/v2/icon_home_v2.png" alt="" class="icon-16" />
+          </button>
 
-          <div class="tile" id="cases-collab-btn"><span>${t.casesColab}</span></div>
-          <div class="tile" id="cases-our-btn"><span>${t.casesOur}</span></div>
+          <!-- Referral program -->
+          <button class="card btn center btn-light" id="card-referral">
+            <div class="row center-y gap-8">
+              <img src="icons/v2/icon_home_v2.png" alt="" class="icon-20" />
+              <div class="h6" data-i18n="referral_program">Referral program</div>
+            </div>
+            <img src="icons/v2/icon_home_v2.png" alt="" class="icon-16" />
+          </button>
 
-          <div class="tile disabled"><span>${t.comingSoon}</span></div>
+          <!-- Settings -->
+          <button class="card btn center btn-plain" id="card-settings">
+            <div class="row center-y gap-8">
+              <img src="icons/v2/icon_home_v2.png" alt="" class="icon-20" />
+              <div class="h6" data-i18n="settings">Settings</div>
+            </div>
+            <img src="icons/v2/icon_home_v2.png" alt="" class="icon-16" />
+          </button>
+
+          <!-- Support -->
+          <button class="card btn center btn-plain" id="card-support">
+            <div class="row center-y gap-8">
+              <img src="icons/v2/icon_home_v2.png" alt="" class="icon-20" />
+              <div class="h6" data-i18n="support">Support</div>
+            </div>
+            <img src="icons/v2/icon_home_v2.png" alt="" class="icon-16" />
+          </button>
         </div>
-      `;
-      // 👉 функционал подзагрузки при нажатии
-      document.getElementById('cases-collab-btn').addEventListener('click', showCasesCollab);
-      document.getElementById('cases-our-btn').addEventListener('click', showCasesOur);
-    }
 
-    function showCasesCollab() {
-      const t = translations[lang];
-      content.innerHTML = `
-        <div class="tile-container">
-          <h3 class="modal-title" style="margin:2px 0 6px">${t.casesSub} — ${t.casesColab}</h3>
-          <div class="tile-row">
-            <div class="tile small"><span>${t.cases_people_enot}</span></div>
-            <div class="tile small"><span>${t.cases_people_ezbro}</span></div>
+        <!-- Inventory -->
+        <div class="inventory">
+          <div class="row between center-y">
+            <div class="h6" data-i18n="my_inventory">My inventory</div>
+            <div class="segmented">
+              <button class="seg-btn active" data-filter="all" id="inv-all" data-i18n="all">All</button>
+              <button class="seg-btn" data-filter="available" id="inv-available" data-i18n="available">Available</button>
+            </div>
           </div>
-          <div class="tile-row">
-            <div class="tile small"><span>${t.cases_people_ellephant}</span></div>
-            <div class="tile small disabled"><span>${t.comingSoon}</span></div>
+
+          <div class="inventory-empty" id="inventory-empty">
+            <img src="icons/v2/icon_home_v2.png" class="icon-32" alt="" />
+            <div class="muted" data-i18n="inventory_empty">There is nothing in your inventory</div>
           </div>
         </div>
-      `;
-    }
 
-    function showCasesOur() {
-      const t = translations[lang];
-      content.innerHTML = `
-        <div class="tile-container">
-          <h3 class="modal-title" style="margin:2px 0 6px">${t.casesOur}</h3>
-          <div class="tile disabled"><span>${t.comingSoon}</span></div>
-        </div>
-      `;
-    }
+        <!-- Action -->
+        <button class="btn btn-accent fullwidth" id="btn-open-case" data-i18n="open_case">
+          Open case
+        </button>
 
-    function showPlinkoSub() {
-      const t = translations[lang];
-      content.innerHTML = `
-        <div class="tile-container">
-          <h3 class="modal-title" style="margin:2px 0 4px">${t.plinkoSub}</h3>
-          <div class="tile"><span>${t.plinkoClassic}</span></div>
-          <div class="tile disabled"><span>${t.comingSoon}</span></div>
-        </div>
-      `;
-    }
+      </div>
+    </section>
+  </main>
 
-    /* Modal utils */
-    function openModal(modal) { modal.classList.remove('hidden'); }
-    function closeModal(modal) { modal.classList.add('hidden'); }
+  <!-- Footer -->
+  <nav class="app-footer">
+    <button class="tab-btn" data-target="game" id="tab-game">
+      <img src="icons/v2/icon_home_v2.png" class="icon-20" alt="" />
+      <span data-i18n="tab_game">Game</span>
+    </button>
+    <button class="tab-btn active" data-target="home" id="tab-home">
+      <img src="icons/v2/icon_home_v2.png" class="icon-20" alt="" />
+      <span data-i18n="tab_home">Home</span>
+    </button>
+    <button class="tab-btn" data-target="swap" id="tab-swap">
+      <img src="icons/v2/icon_home_v2.png" class="icon-20" alt="" />
+      <span data-i18n="tab_swap">Swap</span>
+    </button>
+    <button class="tab-btn" data-target="profile" id="tab-profile">
+      <img src="icons/v2/icon_home_v2.png" class="icon-20" alt="" />
+      <span data-i18n="tab_profile">Profile</span>
+    </button>
+  </nav>
 
-    // Close by overlay or ESC
-    [settingsModal, converterModal].forEach(modal => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal || e.target.matches('[data-close]')) closeModal(modal);
-      });
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        [settingsModal, converterModal].forEach(closeModal);
-      }
-    });
-
-    /* Events: language choose & nav */
-    document.getElementById('ru-button').addEventListener('click', () => setLanguage('ru'));
-    document.getElementById('en-button').addEventListener('click', () => setLanguage('en'));
-
-    document.getElementById('pvp-btn').addEventListener('click', () => showPage('pvp'));
-    document.getElementById('games-btn').addEventListener('click', () => showPage('games'));
-    document.getElementById('money-btn').addEventListener('click', () => showPage('money'));
-
-    /* Settings open */
-    settingsButton.addEventListener('click', () => {
-      const t = translations[lang];
-      settingsTitle.textContent = t.settings;
-      settingsSub.textContent = t.preferences;
-      langLabel.textContent = t.language;
-      themeLabel.textContent = t.theme;
-
-      // sync selects
-      langSelect.value = lang;
-      themeSelect.value = 'old-money';
-      openModal(settingsModal);
-    });
-    // Settings changes
-    langSelect.addEventListener('change', (e) => {
-      setLanguage(e.target.value);
-      // остаёмся в приложении, без welcome
-      mainApp.classList.remove('hidden'); welcomeScreen.classList.add('hidden');
-    });
-    themeSelect.addEventListener('change', (e) => {
-      // Пока одна тема, но заложено на будущее
-      document.documentElement.className = e.target.value;
-    });
-
-    /* Converter open */
-    coinsButton.addEventListener('click', () => {
-      const t = translations[lang];
-      converterTitle.textContent = t.converter;
-      rateLine.textContent = t.rate;
-      coinsLabel.textContent = t.coins;
-      tonLabel.textContent = t.ton;
-
-      // init values
-      coinsInput.value = String(coinCount);
-      tonInput.value = (coinCount / 100).toFixed(2);
-      openModal(converterModal);
-    });
-
-    // Converter logic
-    const rate = 100; // 100 Coins = 1 TON
-
-    function normalizeNumeric(value) {
-      if (typeof value !== 'string') value = String(value ?? '');
-      // разрешаем цифры, точки и запятые; запятую приводим к точке
-      value = value.replace(/[^\d.,]/g, '').replace(',', '.');
-      // одна точка максимум
-      const parts = value.split('.');
-      if (parts.length > 2) {
-        value = parts[0] + '.' + parts.slice(1).join('');
-      }
-      return value;
-    }
-
-    let lockMirror = false;
-    coinsInput.addEventListener('input', () => {
-      if (lockMirror) return;
-      lockMirror = true;
-      coinsInput.value = normalizeNumeric(coinsInput.value);
-      const coins = parseFloat(coinsInput.value) || 0;
-      tonInput.value = coins ? (coins / rate).toFixed(2) : '';
-      lockMirror = false;
-    });
-
-    tonInput.addEventListener('input', () => {
-      if (lockMirror) return;
-      lockMirror = true;
-      tonInput.value = normalizeNumeric(tonInput.value);
-      const ton = parseFloat(tonInput.value) || 0;
-      coinsInput.value = ton ? (ton * rate).toFixed(0) : '';
-      lockMirror = false;
-    });
-
-    /* Welcome animation chain */
-    welcomeText.addEventListener('animationend', () => {
-      setTimeout(() => {
-        languageButtons.classList.remove('hidden');
-        languageButtons.style.opacity = 1;
-      }, 300);
-    });
-
-    /* Boot */
-    initAvatar();
-  </script>
+  <script src="js/i18n.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
